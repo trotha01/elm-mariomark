@@ -6,6 +6,7 @@ import Time exposing (..)
 import Window
 import Debug
 import List
+import Mouse
 
 -- MODEL
 type alias Mario = { x:Float, y:Float, vx:Float, vy:Float, dir:String }
@@ -15,6 +16,8 @@ mario1 = { x=-10, y=100, vx=1, vy=0, dir="right" }
 mario2 = { x=-15, y=103, vx=-1, vy=0, dir="left" }
 
 marios = [mario1, mario2]
+
+type alias State = Marios
 
 -- UPDATE -- ("m" is for Mario)
 bounceVelocity = 10
@@ -43,9 +46,9 @@ steps (dt, keys, (w, h)) marios =
 step : (Time, ArrowKeys, (Int, Int)) -> Mario -> Mario
 step (dt, keys, (width, height)) mario =
   mario
-   |> jump keys
+   -- |> jump keys
    |> gravity dt
-   |> walk keys
+   -- |> walk keys
    |> physics dt
    |> bounds width height
    |> Debug.watch "mario"
@@ -65,14 +68,15 @@ marioImage height mario =
         |> move (mario.x, mario.y + 62 - height/2)
 
 
-renders (w',h') marios =
-  let (w,h) = (toFloat w', toFloat h')
-  in collage w' h'
+renders: (Int, Int) -> Marios -> Bool -> Element
+renders (w,h) marios mouseDown =
+  let (w',h') = (toFloat w, toFloat h)
+  in collage w h
      (
-      (rect w h  |> filled (rgb 174 238 238)) ::
-      (rect w 50 |> filled (rgb 74 163 41)
-                 |> move (0, 24 - h/2)) ::
-      (List.map (marioImage h) marios)
+      (rect w' h'  |> filled (rgb 174 238 238)) ::
+      (rect w' 50 |> filled (rgb 74 163 41)
+                 |> move (0, 24 - h'/2)) ::
+      (List.map (marioImage h') marios)
     )
 
 -- MARIO
@@ -80,7 +84,6 @@ renders (w',h') marios =
 -- arrows : Signal { x : Int, y : Int }
 input : Signal (Time, ArrowKeys, (Int, Int))
 input = let delta = Signal.map (\t -> t/20) (fps 25)
-        -- in  Signal.sampleOn delta (Signal.map2 (,) delta Keyboard.arrows)
         in  Signal.sampleOn delta (Signal.map3 (,,) delta Keyboard.arrows Window.dimensions)
 
 -- foldp : (a -> state -> state) -> state -> Signal a -> Signal state
@@ -89,9 +92,8 @@ input = let delta = Signal.map (\t -> t/20) (fps 25)
 -- (<~)  : (a -> b)      -> Signal a -> Signal b
 -- (~)   : Signal (a -> b) -> Signal a -> Signal b
 
--- main : Signal.Signal Element
--- main = Signal.map2 render Window.dimensions
---         (Signal.foldp step mario input)
-
-main = Signal.map2 renders Window.dimensions
+main : Signal.Signal Element
+main = Signal.map3 renders
+        Window.dimensions
         (Signal.foldp steps marios input)
+        Mouse.isDown

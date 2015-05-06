@@ -3128,6 +3128,7 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
    $List = Elm.List.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
@@ -3173,8 +3174,9 @@ Elm.Main.make = function (_elm) {
          src))));
       }();
    });
-   var renders = F2(function (_v0,
-   marios) {
+   var renders = F3(function (_v0,
+   marios,
+   mouseDown) {
       return function () {
          switch (_v0.ctor)
          {case "_Tuple2":
@@ -3182,8 +3184,8 @@ Elm.Main.make = function (_elm) {
                  var $ = {ctor: "_Tuple2"
                          ,_0: $Basics.toFloat(_v0._0)
                          ,_1: $Basics.toFloat(_v0._1)},
-                 w = $._0,
-                 h = $._1;
+                 w$ = $._0,
+                 h$ = $._1;
                  return A3($Graphics$Collage.collage,
                  _v0._0,
                  _v0._1,
@@ -3192,23 +3194,23 @@ Elm.Main.make = function (_elm) {
                  174,
                  238,
                  238))(A2($Graphics$Collage.rect,
-                 w,
-                 h)),
+                 w$,
+                 h$)),
                  A2($List._op["::"],
                  $Graphics$Collage.move({ctor: "_Tuple2"
                                         ,_0: 0
-                                        ,_1: 24 - h / 2})($Graphics$Collage.filled(A3($Color.rgb,
+                                        ,_1: 24 - h$ / 2})($Graphics$Collage.filled(A3($Color.rgb,
                  74,
                  163,
                  41))(A2($Graphics$Collage.rect,
-                 w,
+                 w$,
                  50))),
                  A2($List.map,
-                 marioImage(h),
+                 marioImage(h$),
                  marios))));
               }();}
          _U.badCase($moduleName,
-         "between lines 69 and 76");
+         "between lines 73 and 80");
       }();
    });
    var bounds = F3(function (w,
@@ -3279,10 +3281,10 @@ Elm.Main.make = function (_elm) {
               {case "_Tuple2":
                  return $Debug.watch("mario")(A2(bounds,
                    _v8._2._0,
-                   _v8._2._1)(physics(_v8._0)(walk(_v8._1)(gravity(_v8._0)(jump(_v8._1)(mario))))));}
+                   _v8._2._1)(physics(_v8._0)(gravity(_v8._0)(mario))));}
               break;}
          _U.badCase($moduleName,
-         "between lines 45 and 51");
+         "between lines 48 and 54");
       }();
    });
    var steps = F2(function (_v15,
@@ -3302,7 +3304,7 @@ Elm.Main.make = function (_elm) {
                    marios);}
               break;}
          _U.badCase($moduleName,
-         "on line 41, column 3 to 44");
+         "on line 44, column 3 to 44");
       }();
    });
    var mario2 = {_: {}
@@ -3319,13 +3321,14 @@ Elm.Main.make = function (_elm) {
                 ,y: 100};
    var marios = _L.fromArray([mario1
                              ,mario2]);
-   var main = A3($Signal.map2,
+   var main = A4($Signal.map3,
    renders,
    $Window.dimensions,
    A3($Signal.foldp,
    steps,
    marios,
-   input));
+   input),
+   $Mouse.isDown);
    var ArrowKeys = F2(function (a,
    b) {
       return {_: {},x: a,y: b};
@@ -3435,6 +3438,37 @@ Elm.Maybe.make = function (_elm) {
                        ,Just: Just
                        ,Nothing: Nothing};
    return _elm.Maybe.values;
+};
+Elm.Mouse = Elm.Mouse || {};
+Elm.Mouse.make = function (_elm) {
+   "use strict";
+   _elm.Mouse = _elm.Mouse || {};
+   if (_elm.Mouse.values)
+   return _elm.Mouse.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Mouse",
+   $Basics = Elm.Basics.make(_elm),
+   $Native$Mouse = Elm.Native.Mouse.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var clicks = $Native$Mouse.clicks;
+   var isDown = $Native$Mouse.isDown;
+   var position = $Native$Mouse.position;
+   var x = A2($Signal.map,
+   $Basics.fst,
+   position);
+   var y = A2($Signal.map,
+   $Basics.snd,
+   position);
+   _elm.Mouse.values = {_op: _op
+                       ,position: position
+                       ,x: x
+                       ,y: y
+                       ,isDown: isDown
+                       ,clicks: clicks};
+   return _elm.Mouse.values;
 };
 Elm.Native.Basics = {};
 Elm.Native.Basics.make = function(localRuntime) {
@@ -5354,6 +5388,50 @@ Elm.Native.List.make = function(localRuntime) {
 	};
 	return localRuntime.Native.List.values = Elm.Native.List.values;
 
+};
+
+Elm.Native = Elm.Native || {};
+Elm.Native.Mouse = {};
+Elm.Native.Mouse.make = function(localRuntime) {
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Mouse = localRuntime.Native.Mouse || {};
+	if (localRuntime.Native.Mouse.values)
+	{
+		return localRuntime.Native.Mouse.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Utils = Elm.Native.Utils.make(localRuntime);
+
+	var position = NS.input('Mouse.position', Utils.Tuple2(0,0));
+
+	var isDown = NS.input('Mouse.isDown', false);
+
+	var clicks = NS.input('Mouse.clicks', Utils.Tuple0);
+
+	var node = localRuntime.isFullscreen()
+		? document
+		: localRuntime.node;
+
+	localRuntime.addListener([clicks.id], node, 'click', function click() {
+		localRuntime.notify(clicks.id, Utils.Tuple0);
+	});
+	localRuntime.addListener([isDown.id], node, 'mousedown', function down() {
+		localRuntime.notify(isDown.id, true);
+	});
+	localRuntime.addListener([isDown.id], node, 'mouseup', function up() {
+		localRuntime.notify(isDown.id, false);
+	});
+	localRuntime.addListener([position.id], node, 'mousemove', function move(e) {
+		localRuntime.notify(position.id, Utils.getXY(e));
+	});
+
+	return localRuntime.Native.Mouse.values = {
+		position: position,
+		isDown: isDown,
+		clicks: clicks
+	};
 };
 
 Elm.Native.Port = {};
