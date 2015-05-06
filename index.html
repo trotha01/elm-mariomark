@@ -3205,13 +3205,15 @@ Elm.Main.make = function (_elm) {
                  marios))));
               }();}
          _U.badCase($moduleName,
-         "between lines 76 and 81");
+         "between lines 77 and 82");
       }();
    });
    var bounds = F3(function (w,
    h,
    m) {
       return function () {
+         var vy = _U.cmp(m.y,
+         $Basics.toFloat(h)) > 0 ? 0 - m.vy : m.vy;
          var $ = _U.cmp($Basics.abs(m.x),
          $Basics.toFloat(w) / 2) > 0 ? {ctor: "_Tuple2"
                                        ,_0: 0 - m.vx
@@ -3222,6 +3224,7 @@ Elm.Main.make = function (_elm) {
          vx = $._0,
          dir = $._1;
          return _U.replace([["vx",vx]
+                           ,["vy",vy]
                            ,["dir",dir]],
          m);
       }();
@@ -3280,7 +3283,7 @@ Elm.Main.make = function (_elm) {
                    _v8._2._1)(physics(_v8._0)(gravity(_v8._0)(mario))));}
               break;}
          _U.badCase($moduleName,
-         "between lines 51 and 57");
+         "between lines 52 and 58");
       }();
    });
    var mario0 = {_: {}
@@ -3314,7 +3317,7 @@ Elm.Main.make = function (_elm) {
                    }();}
               break;}
          _U.badCase($moduleName,
-         "between lines 43 and 47");
+         "between lines 44 and 48");
       }();
    });
    var main = A3($Signal.map2,

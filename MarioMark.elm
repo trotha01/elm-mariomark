@@ -36,7 +36,8 @@ bounds w h m =
   let (vx, dir) = if abs(m.x) > toFloat(w)/2
                   then (-m.vx, if m.dir == "right" then "left" else "right")
                   else (m.vx, m.dir)
-  in { m | vx <- vx, dir <- dir }
+      vy        = if m.y > toFloat(h) then -m.vy else m.vy
+  in { m | vx <- vx, vy <- vy, dir <- dir }
 
 update : (Time, ArrowKeys, (Int, Int), Bool) -> Marios -> Marios
 update (dt, keys, (w, h), addMario) marios =
