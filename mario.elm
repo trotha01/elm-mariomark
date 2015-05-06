@@ -12,26 +12,26 @@ import Mouse
 type alias Mario = { x:Float, y:Float, vx:Float, vy:Float, dir:String }
 type alias Marios = List Mario
 type alias ArrowKeys = { x:Int, y:Int }
-mario1 = { x=-10, y=100, vx=1, vy=0, dir="right" }
-mario2 = { x=-15, y=103, vx=-1, vy=0, dir="left" }
 
-marios = [mario1, mario2]
+mario0 = { x=-10, y=100, vx=xVelocity, vy=0, dir="right" }
 
 type alias State = Marios
 
 -- UPDATE -- ("m" is for Mario)
-bounceVelocity = 10
-xVelocity = 5
+
+bounceVelocity = 15
+xVelocity = 8
+-- gravity
+g = 5
 
 jump {y} m = if y > 0 && m.y == 0 then { m | vy <- 5 } else m
-gravity t m = if m.y > 0 then { m | vy <- m.vy - t/4 } else { m | vy <- bounceVelocity }
+gravity t m = if m.y > 0 then { m | vy <- m.vy - t/g} else { m | vy <- bounceVelocity }
 physics t m = { m | x <- m.x + t*m.vx ,
                     y <- max 0 (m.y + t*m.vy) }
 walk {x} m = { m | vx <- if x /=0 then (toFloat x*xVelocity) else m.vx
                  , dir <- if x < 0 then "left" else
                           if x > 0 then "right" else m.dir }
 
--- { m | vx <- if (abs m.x/4) > w then -3 } -- -m.vx else m.vx }
 bounds : Int -> Int -> Mario -> Mario
 bounds w h m =
   let (vx, dir) = if abs(m.x) > toFloat(w)/2
@@ -39,9 +39,12 @@ bounds w h m =
                   else (m.vx, m.dir)
   in { m | vx <- vx, dir <- dir }
 
-steps : (Time, ArrowKeys, (Int, Int)) -> Marios -> Marios
-steps (dt, keys, (w, h)) marios =
-  List.map (step (dt, keys, (w, h))) marios
+update : (Time, ArrowKeys, (Int, Int), Bool) -> Marios -> Marios
+update (dt, keys, (w, h), addMario) marios =
+  let marios' = if addMario then mario0 :: marios else marios
+      marioCount = {marioCount= List.length marios' }
+        |> Debug.watch "Mario Count: "
+      in List.map (step (dt, keys, (w, h))) marios'
 
 step : (Time, ArrowKeys, (Int, Int)) -> Mario -> Mario
 step (dt, keys, (width, height)) mario =
@@ -68,8 +71,8 @@ marioImage height mario =
         |> move (mario.x, mario.y + 62 - height/2)
 
 
-renders: (Int, Int) -> Marios -> Bool -> Element
-renders (w,h) marios mouseDown =
+renders: (Int, Int) -> Marios -> Element
+renders (w,h) marios =
   let (w',h') = (toFloat w, toFloat h)
   in collage w h
      (
@@ -82,9 +85,9 @@ renders (w,h) marios mouseDown =
 -- MARIO
 -- fps : number -> Signal Time
 -- arrows : Signal { x : Int, y : Int }
-input : Signal (Time, ArrowKeys, (Int, Int))
+input : Signal (Time, ArrowKeys, (Int, Int), Bool)
 input = let delta = Signal.map (\t -> t/20) (fps 25)
-        in  Signal.sampleOn delta (Signal.map3 (,,) delta Keyboard.arrows Window.dimensions)
+        in  Signal.sampleOn delta (Signal.map4 (,,,) delta Keyboard.arrows Window.dimensions Mouse.isDown)
 
 -- foldp : (a -> state -> state) -> state -> Signal a -> Signal state
 -- map2  : (a -> b -> result) -> Signal a -> Signal b -> Signal result
@@ -93,7 +96,6 @@ input = let delta = Signal.map (\t -> t/20) (fps 25)
 -- (~)   : Signal (a -> b) -> Signal a -> Signal b
 
 main : Signal.Signal Element
-main = Signal.map3 renders
+main = Signal.map2 renders
         Window.dimensions
-        (Signal.foldp steps marios input)
-        Mouse.isDown
+        (Signal.foldp update [mario0] input)

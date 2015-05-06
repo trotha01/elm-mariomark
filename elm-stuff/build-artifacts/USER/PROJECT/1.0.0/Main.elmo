@@ -28,16 +28,18 @@ Elm.Main.make = function (_elm) {
       $Time.fps(25));
       return A2($Signal.sampleOn,
       delta,
-      A4($Signal.map3,
-      F3(function (v0,v1,v2) {
-         return {ctor: "_Tuple3"
+      A5($Signal.map4,
+      F4(function (v0,v1,v2,v3) {
+         return {ctor: "_Tuple4"
                 ,_0: v0
                 ,_1: v1
-                ,_2: v2};
+                ,_2: v2
+                ,_3: v3};
       }),
       delta,
       $Keyboard.arrows,
-      $Window.dimensions));
+      $Window.dimensions,
+      $Mouse.isDown));
    }();
    var marioImage = F2(function (height,
    mario) {
@@ -62,9 +64,8 @@ Elm.Main.make = function (_elm) {
          src))));
       }();
    });
-   var renders = F3(function (_v0,
-   marios,
-   mouseDown) {
+   var renders = F2(function (_v0,
+   marios) {
       return function () {
          switch (_v0.ctor)
          {case "_Tuple2":
@@ -98,7 +99,7 @@ Elm.Main.make = function (_elm) {
                  marios))));
               }();}
          _U.badCase($moduleName,
-         "between lines 73 and 80");
+         "between lines 76 and 83");
       }();
    });
    var bounds = F3(function (w,
@@ -137,7 +138,8 @@ Elm.Main.make = function (_elm) {
          m) : m;
       }();
    });
-   var xVelocity = 5;
+   var g = 5;
+   var xVelocity = 8;
    var walk = F2(function (_v6,m) {
       return function () {
          return _U.replace([["vx"
@@ -150,12 +152,12 @@ Elm.Main.make = function (_elm) {
          m);
       }();
    });
-   var bounceVelocity = 10;
+   var bounceVelocity = 15;
    var gravity = F2(function (t,
    m) {
       return _U.cmp(m.y,
       0) > 0 ? _U.replace([["vy"
-                           ,m.vy - t / 4]],
+                           ,m.vy - t / g]],
       m) : _U.replace([["vy"
                        ,bounceVelocity]],
       m);
@@ -172,51 +174,49 @@ Elm.Main.make = function (_elm) {
                    _v8._2._1)(physics(_v8._0)(gravity(_v8._0)(mario))));}
               break;}
          _U.badCase($moduleName,
-         "between lines 48 and 54");
+         "between lines 51 and 57");
       }();
    });
-   var steps = F2(function (_v15,
-   marios) {
-      return function () {
-         switch (_v15.ctor)
-         {case "_Tuple3":
-            switch (_v15._2.ctor)
-              {case "_Tuple2":
-                 return A2($List.map,
-                   step({ctor: "_Tuple3"
-                        ,_0: _v15._0
-                        ,_1: _v15._1
-                        ,_2: {ctor: "_Tuple2"
-                             ,_0: _v15._2._0
-                             ,_1: _v15._2._1}}),
-                   marios);}
-              break;}
-         _U.badCase($moduleName,
-         "on line 44, column 3 to 44");
-      }();
-   });
-   var mario2 = {_: {}
-                ,dir: "left"
-                ,vx: -1
-                ,vy: 0
-                ,x: -15
-                ,y: 103};
-   var mario1 = {_: {}
+   var mario0 = {_: {}
                 ,dir: "right"
-                ,vx: 1
+                ,vx: xVelocity
                 ,vy: 0
                 ,x: -10
                 ,y: 100};
-   var marios = _L.fromArray([mario1
-                             ,mario2]);
-   var main = A4($Signal.map3,
+   var update = F2(function (_v15,
+   marios) {
+      return function () {
+         switch (_v15.ctor)
+         {case "_Tuple4":
+            switch (_v15._2.ctor)
+              {case "_Tuple2":
+                 return function () {
+                      var marios$ = _v15._3 ? A2($List._op["::"],
+                      mario0,
+                      marios) : marios;
+                      var marioCount = $Debug.watch("Mario Count: ")({_: {}
+                                                                     ,marioCount: $List.length(marios$)});
+                      return A2($List.map,
+                      step({ctor: "_Tuple3"
+                           ,_0: _v15._0
+                           ,_1: _v15._1
+                           ,_2: {ctor: "_Tuple2"
+                                ,_0: _v15._2._0
+                                ,_1: _v15._2._1}}),
+                      marios$);
+                   }();}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 44 and 47");
+      }();
+   });
+   var main = A3($Signal.map2,
    renders,
    $Window.dimensions,
    A3($Signal.foldp,
-   steps,
-   marios,
-   input),
-   $Mouse.isDown);
+   update,
+   _L.fromArray([mario0]),
+   input));
    var ArrowKeys = F2(function (a,
    b) {
       return {_: {},x: a,y: b};
@@ -236,17 +236,16 @@ Elm.Main.make = function (_elm) {
    _elm.Main.values = {_op: _op
                       ,Mario: Mario
                       ,ArrowKeys: ArrowKeys
-                      ,mario1: mario1
-                      ,mario2: mario2
-                      ,marios: marios
+                      ,mario0: mario0
                       ,bounceVelocity: bounceVelocity
                       ,xVelocity: xVelocity
+                      ,g: g
                       ,jump: jump
                       ,gravity: gravity
                       ,physics: physics
                       ,walk: walk
                       ,bounds: bounds
-                      ,steps: steps
+                      ,update: update
                       ,step: step
                       ,marioImage: marioImage
                       ,renders: renders
