@@ -21,6 +21,8 @@ Elm.Main.make = function (_elm) {
    $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var input = function () {
+      var _ = $Debug.watch("fps")({_: {}
+                                  ,fps$: $Time.fps(25)});
       var delta = A2($Signal.map,
       function (t) {
          return t / 20;
@@ -99,7 +101,7 @@ Elm.Main.make = function (_elm) {
                  marios))));
               }();}
          _U.badCase($moduleName,
-         "between lines 76 and 83");
+         "between lines 76 and 81");
       }();
    });
    var bounds = F3(function (w,
@@ -191,23 +193,24 @@ Elm.Main.make = function (_elm) {
             switch (_v15._2.ctor)
               {case "_Tuple2":
                  return function () {
+                      var update$ = step({ctor: "_Tuple3"
+                                         ,_0: _v15._0
+                                         ,_1: _v15._1
+                                         ,_2: {ctor: "_Tuple2"
+                                              ,_0: _v15._2._0
+                                              ,_1: _v15._2._1}});
                       var marios$ = _v15._3 ? A2($List._op["::"],
                       mario0,
                       marios) : marios;
-                      var marioCount = $Debug.watch("Mario Count: ")({_: {}
-                                                                     ,marioCount: $List.length(marios$)});
+                      var _ = $Debug.watch("Mario Count: ")({_: {}
+                                                            ,marioCount: $List.length(marios$)});
                       return A2($List.map,
-                      step({ctor: "_Tuple3"
-                           ,_0: _v15._0
-                           ,_1: _v15._1
-                           ,_2: {ctor: "_Tuple2"
-                                ,_0: _v15._2._0
-                                ,_1: _v15._2._1}}),
+                      update$,
                       marios$);
                    }();}
               break;}
          _U.badCase($moduleName,
-         "between lines 44 and 47");
+         "between lines 43 and 47");
       }();
    });
    var main = A3($Signal.map2,

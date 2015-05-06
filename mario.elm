@@ -21,8 +21,7 @@ type alias State = Marios
 
 bounceVelocity = 15
 xVelocity = 8
--- gravity
-g = 5
+g = 5 -- gravity
 
 jump {y} m = if y > 0 && m.y == 0 then { m | vy <- 5 } else m
 gravity t m = if m.y > 0 then { m | vy <- m.vy - t/g} else { m | vy <- bounceVelocity }
@@ -42,9 +41,10 @@ bounds w h m =
 update : (Time, ArrowKeys, (Int, Int), Bool) -> Marios -> Marios
 update (dt, keys, (w, h), addMario) marios =
   let marios' = if addMario then mario0 :: marios else marios
-      marioCount = {marioCount= List.length marios' }
-        |> Debug.watch "Mario Count: "
-      in List.map (step (dt, keys, (w, h))) marios'
+      update' = (step (dt, keys, (w, h)))
+      _ = {marioCount= List.length marios' }
+            |> Debug.watch "Mario Count: "
+      in List.map update' marios'
 
 step : (Time, ArrowKeys, (Int, Int)) -> Mario -> Mario
 step (dt, keys, (width, height)) mario =
@@ -74,26 +74,19 @@ marioImage height mario =
 renders: (Int, Int) -> Marios -> Element
 renders (w,h) marios =
   let (w',h') = (toFloat w, toFloat h)
-  in collage w h
-     (
-      (rect w' h'  |> filled (rgb 174 238 238)) ::
+  in collage w h (
+      (rect w' h' |> filled (rgb 174 238 238)) ::
       (rect w' 50 |> filled (rgb 74 163 41)
-                 |> move (0, 24 - h'/2)) ::
-      (List.map (marioImage h') marios)
-    )
+                  |> move (0, 24 - h'/2)) ::
+      (List.map (marioImage h') marios))
 
 -- MARIO
 -- fps : number -> Signal Time
 -- arrows : Signal { x : Int, y : Int }
 input : Signal (Time, ArrowKeys, (Int, Int), Bool)
 input = let delta = Signal.map (\t -> t/20) (fps 25)
+            _ = { fps' = (fps 25) } |> Debug.watch "fps"
         in  Signal.sampleOn delta (Signal.map4 (,,,) delta Keyboard.arrows Window.dimensions Mouse.isDown)
-
--- foldp : (a -> state -> state) -> state -> Signal a -> Signal state
--- map2  : (a -> b -> result) -> Signal a -> Signal b -> Signal result
--- map   : (a -> result) -> Signal a -> Signal result
--- (<~)  : (a -> b)      -> Signal a -> Signal b
--- (~)   : Signal (a -> b) -> Signal a -> Signal b
 
 main : Signal.Signal Element
 main = Signal.map2 renders
