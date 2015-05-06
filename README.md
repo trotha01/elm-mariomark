@@ -9,7 +9,7 @@ http://www.goodboydigital.com/pixijs/bunnymark/
 elm-make MarioMark.elm --output=index.html --yes
 ```
 
-or use elm-reactor
+or use elm-reactor (this is a lot of fun with the elm-reactor debugger)
 
 ```
 elm-reactor
