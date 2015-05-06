@@ -50,7 +50,7 @@ Elm.Main.make = function (_elm) {
          0) > 0 ? "jump" : !_U.eq(mario.vx,
          0) ? "walk" : "stand";
          var src = A2($Basics._op["++"],
-         "/imgs/mario/",
+         "imgs/mario/",
          A2($Basics._op["++"],
          verb,
          A2($Basics._op["++"],

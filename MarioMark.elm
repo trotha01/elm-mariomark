@@ -65,7 +65,7 @@ marioImage height mario =
   let verb = if | mario.y  >  0 -> "jump"
                 | mario.vx /= 0 -> "walk"
                 | otherwise     -> "stand"
-      src = "/imgs/mario/" ++ verb ++ "/" ++ mario.dir ++ ".gif"
+      src = "imgs/mario/" ++ verb ++ "/" ++ mario.dir ++ ".gif"
   in (image 35 35 src)
         |> toForm
         |> Debug.trace "mario"
