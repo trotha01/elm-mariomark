@@ -81,7 +81,8 @@ renders (w,h) marios =
                   |> move (0, 24 - h'/2)) ::
       (List.map (marioImage h') marios))
 
--- MARIO
+-- INPUTS
+
 -- fps : number -> Signal Time
 -- arrows : Signal { x : Int, y : Int }
 input : Signal (Time, ArrowKeys, (Int, Int), Bool)
