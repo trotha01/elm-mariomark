@@ -3110,17 +3110,17 @@ Elm.List.make = function (_elm) {
                       ,sortWith: sortWith};
    return _elm.List.values;
 };
-Elm.Main = Elm.Main || {};
-Elm.Main.make = function (_elm) {
+Elm.MarioMark = Elm.MarioMark || {};
+Elm.MarioMark.make = function (_elm) {
    "use strict";
-   _elm.Main = _elm.Main || {};
-   if (_elm.Main.values)
-   return _elm.Main.values;
+   _elm.MarioMark = _elm.MarioMark || {};
+   if (_elm.MarioMark.values)
+   return _elm.MarioMark.values;
    var _op = {},
    _N = Elm.Native,
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
-   $moduleName = "Main",
+   $moduleName = "MarioMark",
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -3213,7 +3213,7 @@ Elm.Main.make = function (_elm) {
                  marios))));
               }();}
          _U.badCase($moduleName,
-         "between lines 77 and 82");
+         "between lines 79 and 84");
       }();
    });
    var bounds = F3(function (w,
@@ -3291,7 +3291,7 @@ Elm.Main.make = function (_elm) {
                    _v8._2._1)(physics(_v8._0)(gravity(_v8._0)(mario))));}
               break;}
          _U.badCase($moduleName,
-         "between lines 52 and 58");
+         "between lines 54 and 60");
       }();
    });
    var mario0 = {_: {}
@@ -3325,7 +3325,7 @@ Elm.Main.make = function (_elm) {
                    }();}
               break;}
          _U.badCase($moduleName,
-         "between lines 44 and 48");
+         "between lines 46 and 50");
       }();
    });
    var main = A3($Signal.map2,
@@ -3351,25 +3351,25 @@ Elm.Main.make = function (_elm) {
              ,x: a
              ,y: b};
    });
-   _elm.Main.values = {_op: _op
-                      ,Mario: Mario
-                      ,ArrowKeys: ArrowKeys
-                      ,mario0: mario0
-                      ,bounceVelocity: bounceVelocity
-                      ,xVelocity: xVelocity
-                      ,g: g
-                      ,jump: jump
-                      ,gravity: gravity
-                      ,physics: physics
-                      ,walk: walk
-                      ,bounds: bounds
-                      ,update: update
-                      ,step: step
-                      ,marioImage: marioImage
-                      ,renders: renders
-                      ,input: input
-                      ,main: main};
-   return _elm.Main.values;
+   _elm.MarioMark.values = {_op: _op
+                           ,Mario: Mario
+                           ,ArrowKeys: ArrowKeys
+                           ,mario0: mario0
+                           ,bounceVelocity: bounceVelocity
+                           ,xVelocity: xVelocity
+                           ,g: g
+                           ,jump: jump
+                           ,gravity: gravity
+                           ,physics: physics
+                           ,walk: walk
+                           ,bounds: bounds
+                           ,update: update
+                           ,step: step
+                           ,marioImage: marioImage
+                           ,renders: renders
+                           ,input: input
+                           ,main: main};
+   return _elm.MarioMark.values;
 };
 Elm.Maybe = Elm.Maybe || {};
 Elm.Maybe.make = function (_elm) {
